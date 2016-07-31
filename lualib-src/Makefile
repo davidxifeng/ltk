@@ -21,5 +21,5 @@ all: $(BUFFER_SO)
 
 .PHONY: all
 
-$(BUFFER_SO): buflib.c buflib.h
+$(BUFFER_SO): buflib.c buflib.inl
 	$(CC) $(SHARED_LIB) -o $@ $(CFLAGS) $<
