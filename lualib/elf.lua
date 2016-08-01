@@ -4,51 +4,52 @@ local assert = assert
 local ipairs = ipairs
 local type = type
 
-local buffer = require 'buffer'
+local binary = require 'binary'
 
-local reader = buffer.read
+local read_buf    = binary.read_buf
+local read_struct = binary.read_struct
 
-
-local ElfMethods = {
-  elf32_hdr = '',
-  elf64_hdr = '',
+local Elf32_Ehdr = {
 }
+
+local Elf64_Ehdr = {
+  fmt = '{c16 u2 u2 u4 u8 u8 u8 u4 u2 u2 u2 u2 u2 u2}',
+  [1]  = 'ident',       -- ident bytes       16 bytes
+  [2]  = 'type',        -- file type         Elf64_Half
+  [3]  = 'machine',     -- target machine    Elf64_Half
+  [4]  = 'version',     -- file version      Elf64_Word
+  [5]  = 'entry',       -- start address     Elf64_Addr
+  [6]  = 'phoff',       -- phdr file offset  Elf64_Off
+  [7]  = 'shoff',       -- shdr file offset  Elf64_Off
+  [8]  = 'flags',       -- file flags        Elf64_Word
+  [9]  = 'ehsize',      -- sizeof ehdr       Elf64_Half
+  [10] = 'phentsize',   -- sizeof phdr       Elf64_Half
+  [11] = 'phnum',       -- number phdrs      Elf64_Half
+  [12] = 'shentsize',   -- sizeof shdr       Elf64_Half
+  [13] = 'shnum',       -- number shdrs      Elf64_Half
+  [14] = 'shstrndx',    -- shdr string index Elf64_Half
+}
+
+local ElfMethods = {}
 
 --- 解析elf文件
 function ElfMethods:parse()
   local buf = self[1]
-  local mag, cls, enc  = reader(buf, '< c4 u1 u1')
-  if mag ~= '\x7fELF' then return nil end
+  local mag, cls, enc  = read_buf(buf, '< c4 u1 u1')
+  if mag ~= '\x7fELF' then return nil, 'bad elf magic' end
   self[2] = {} -- info table
-  self:setFileClass(cls):setDataEncoding(enc):parseHeader()
 
-  return self
-end
-
-function ElfMethods:setDataEncoding(enc)
-  if enc == 1 then
-    self[2].endian = 'LSB'
-  elseif enc == 2 then
-    self[2].endian = 'MSB'
-    assert(false, 'TODO big endian data encoding support')
-  else
-    assert(false, 'bad data encoding')
-  end
-  return self
-end
-
-function ElfMethods:setFileClass(cls)
   if cls == 1 then
     self[2].bit = '32-bit'
+    self[2].header = read_struct(buf, Elf32_Ehdr)
   elseif cls == 2 then
     self[2].bit = '64-bit'
+    self[2].header = read_struct(buf, Elf64_Ehdr)
   else
-    assert(false, 'bad file class')
+    return nil, 'unknown file class'
   end
-  return self
-end
 
-function ElfMethods:parseHeader()
+  return self
 end
 
 function ElfMethods:info()
