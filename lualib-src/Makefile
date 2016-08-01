@@ -17,9 +17,12 @@ endif
 
 BUFFER_SO = ../luaclib/buffer.so
 
-all: $(BUFFER_SO)
+all: ../luaclib/ $(BUFFER_SO)
 
 .PHONY: all
+
+../luaclib/:
+	mkdir -p $@
 
 $(BUFFER_SO): buflib.c buflib.h
 	$(CC) $(SHARED_LIB) -o $@ $(CFLAGS) $<
