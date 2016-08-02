@@ -8,7 +8,7 @@ local inspect = require 'inspect'
 local ELF = require 'elf'
 
 local function test()
-  local elf = ELF.new('data/yes.elf')
+  local elf = ELF.new('data/test.elf')
   show(elf:info())
 end
 

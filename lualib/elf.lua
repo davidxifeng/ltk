@@ -78,11 +78,34 @@ function ElfMethods:parse_elf64(buf)
   local shdr = read_array(buf, ehdr.shoff, ehdr.shentsize, ehdr.shnum, Elf64_Shdr)
   info.shdr = shdr
 
+  local sections = {}
+  for i, v in ipairs(shdr) do
+    -- SHT_NOBITS    8
+    if v.sh_type ~= 8 then
+      local t = v.sh_offset + 1
+      sections[i] = buf:sub(t, t + v.sh_size) -- TODO buffer usertype
+    else
+      sections[i] = ''
+    end
+  end
+  info.sections = sections
+
+  -- SHN_UNDEF 0
+  if ehdr.shstrndx ~= 0 then
+    local str_tab = sections[ehdr.shstrndx + 1]
+    for _, v in ipairs(shdr) do
+      v.sh_name = read_buf(str_tab, ('+%d s'):format(v.sh_name))
+    end
+  end
+
   return self
 end
 
 function ElfMethods:info()
-  return self[2]
+  local info = self[2]
+  --info.shdr = nil
+  info.sections = nil
+  return info
 end
 
 local M = {}
