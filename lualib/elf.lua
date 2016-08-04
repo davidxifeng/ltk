@@ -46,6 +46,18 @@ local Elf64_Shdr = {
   [10] = 'sh_entsize',   -- Elf64_Xword entry size if table
 }
 
+local Elf64_Phdr = {
+  fmt = '< {u4 u4 u8 u8 u8 u8 u8 u8}',
+  [1] = 'p_type',   -- Elf64_Word  entry type
+  [2] = 'p_flags',  -- Elf64_Word  entry flags
+  [3] = 'p_offset', -- Elf64_Off   file offset
+  [4] = 'p_vaddr',  -- Elf64_Addr  virtual address
+  [5] = 'p_paddr',  -- Elf64_Addr  physical address
+  [6] = 'p_filesz', -- Elf64_Xword file size
+  [7] = 'p_memsz',  -- Elf64_Xword memory size
+  [8] = 'p_align',  -- Elf64_Xword memory/file alignment
+}
+
 local ElfMethods = {}
 
 --- 解析elf文件
@@ -97,6 +109,9 @@ function ElfMethods:parse_elf64(buf)
       v.sh_name = read_buf(str_tab, ('+%d s'):format(v.sh_name))
     end
   end
+
+  local phdr = read_array(buf, ehdr.phoff, ehdr.phentsize, ehdr.phnum, Elf64_Phdr)
+  info.phdr = phdr
 
   return self
 end
