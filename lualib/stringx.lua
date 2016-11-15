@@ -66,9 +66,20 @@ function string:xxd()
 end
 
 function string:from_hex()
+  if # self % 2 == 1 then self = '0' .. self end
   return (self:gsub('%X', ''):gsub('(..)', function (bs)
     return string.char(tonumber(bs, 16))
   end))
+end
+
+string.hex_decode = string.from_hex
+
+-- little endian integer buffer
+function string:hex()
+  if # self % 2 == 1 then self = '0' .. self end
+  return (self:gsub('%X', ''):gsub('(..)', function (bs)
+    return string.char(tonumber(bs, 16))
+  end)):reverse()
 end
 
 return string

@@ -12,4 +12,6 @@ local function test()
   show(elf:info())
 end
 
-test()
+--test()
+print(('123'):hex():xxd())
+print(('123'):from_hex():xxd())
