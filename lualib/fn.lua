@@ -11,6 +11,7 @@ local M = {}
 local table  = table
 local pairs  = pairs
 local ipairs = ipairs
+local table_insert = table.insert
 
 --- @see: http://hackage.haskell.org/package/base-4.9.0.0/docs/Data-List.html#v:any
 function M.any(cb, ...)--{{
