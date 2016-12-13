@@ -90,6 +90,36 @@ function M.elem(array, e)--{{
   return false
 end--}}
 
+-- list: sorted array
+-- comp: ( a -> b -> Bool )
+function M.group_by(list, comp)--{{
+  local r = {}
+  local list_len = # list
+  if list_len > 0 then
+    local prev = list[1]
+    local cl = {prev}
+    r[1] = cl
+    for i = 2, list_len do
+      local curr = list[i]
+      local flag
+      if comp then
+        flag = comp(prev, curr)
+      else
+        flag = prev == curr
+      end
+      if flag then
+        table_insert(cl, curr)
+      else
+        prev = curr
+        cl = {curr}
+        table_insert(r, cl)
+      end
+    end
+  end
+  return r
+end--}}
+
+
 return M
 
 -- vim: tabstop=2 softtabstop=2 shiftwidth=2
