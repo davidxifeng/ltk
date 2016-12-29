@@ -1,10 +1,8 @@
---- utils library function
+--- functional utils library function
 --
--- last modified: Tue 15:44 Nov 15
--- created: Thu 16:08 Sep 01
 -- @license MIT
 -- @author davidxifeng@gmail.com
--- @module fn
+-- @module Fn
 
 local M = {}
 
@@ -91,6 +89,14 @@ function M.elem(array, e)--{{
   return false
 end--}}
 
+function M.map(a, f)--{{
+  local r = {}
+  for i = 1, # a do
+    r[i] = f(a[i])
+  end
+  return r
+end--}}
+
 -- list: sorted array
 -- comp: ( a -> b -> Bool )
 function M.group_by(list, comp)--{{
@@ -111,8 +117,7 @@ function M.group_by(list, comp)--{{
       if flag then
         table_insert(cl, curr)
       else
-        prev = curr
-        cl = {curr}
+        prev, cl = curr, {curr}
         table_insert(r, cl)
       end
     end
@@ -120,6 +125,14 @@ function M.group_by(list, comp)--{{
   return r
 end--}}
 
+-- simple copy
+function M.copy_array(list)
+  local vector = {}
+  for i = 1, # list do
+    vector[i] = list[i]
+  end
+  return vector
+end
 
 return M
 
