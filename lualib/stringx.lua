@@ -1,7 +1,7 @@
 
 
 --- xxd style string hex dump
-function string:xxd()
+function string:xxd()--{{
 
   local non_print_pattern = '%c' -- or use '%G'
 
@@ -63,23 +63,26 @@ function string:xxd()
   end
 
   return s
-end
+end--}}
 
-function string:from_hex()
+function string:from_hex()--{{
   if # self % 2 == 1 then self = '0' .. self end
   return (self:gsub('%X', ''):gsub('(..)', function (bs)
     return string.char(tonumber(bs, 16))
   end))
-end
+end--}}
 
 string.hex_decode = string.from_hex
 
 -- little endian integer buffer
-function string:hex()
+function string:hex()--{{
   if # self % 2 == 1 then self = '0' .. self end
   return (self:gsub('%X', ''):gsub('(..)', function (bs)
     return string.char(tonumber(bs, 16))
   end)):reverse()
-end
+end--}}
 
 return string
+
+-- vim: tabstop=2 softtabstop=2 shiftwidth=2 smarttab expandtab shiftround
+-- vim: fdm=marker foldmarker={{,}}
